@@ -10,7 +10,7 @@ import java.util.UUID
 
 
 object KafkaProducer {
-  val serializer = AvroSerde.AvroSerializer()
+  val serializer = AvroSerde.AvroSerializer[PersonAvro](PersonAvro.getClassSchema)
 
   val producer: ZStream[Producer, Throwable, Nothing] =
     ZStream
