@@ -1,0 +1,41 @@
+{
+  "name": "PersonAvro",
+  "namespace": "com.aap.personkafka",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "doc": "The id, generated in invite, uniquely identifying an orderline.",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "amount_net",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 12,
+        "scale": 2
+      }
+    },
+    {
+      "name": "code",
+      "type": "string"
+    },
+    {
+      "name": "vat_rate_percentage",
+      "type": [
+        "null",
+        {
+          "type": "bytes",
+          "logicalType": "decimal",
+          "precision": 12,
+          "scale": 2
+        }
+      ],
+      "default": null
+    }
+  ]
+}
