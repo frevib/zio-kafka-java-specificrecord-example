@@ -15,12 +15,12 @@ object AvroSerde {
   case class AvroSerializer[T <: SpecificRecord](schema: Schema) extends Serializer[Any, T] {
     val datumWriter: SpecificDatumWriter[T] = new SpecificDatumWriter[T](schema)
     val encoderFactory: EncoderFactory = EncoderFactory.get()
-    val encoder: BinaryEncoder = encoderFactory.binaryEncoder(ByteArrayOutputStream(0), null)
+    val reusableEncoder: BinaryEncoder = encoderFactory.binaryEncoder(ByteArrayOutputStream(0), null)
 
     override def serialize(topic: String, headers: Headers, data: T): RIO[Any, Array[Byte]] =
       ZIO.attempt {
         val baos = ByteArrayOutputStream()
-        val binaryEncoder = encoderFactory.binaryEncoder(baos, encoder)
+        val binaryEncoder = encoderFactory.binaryEncoder(baos, reusableEncoder)
         val result = datumWriter.write(data, binaryEncoder)
         binaryEncoder.flush()
 
@@ -31,12 +31,12 @@ object AvroSerde {
   case class AvroDeserializer[T <: SpecificRecord](schema: Schema) extends Deserializer[Any, T] {
     val datumReader = new SpecificDatumReader[T](schema)
     val decoderFactory = DecoderFactory.get()
-    val decoder = decoderFactory.binaryDecoder(new Array[Byte](0), null)
+    val reusableDecoder = decoderFactory.binaryDecoder(new Array[Byte](0), null)
 
 
     override def deserialize(topic: String, headers: Headers, avroBytes: Array[Byte]): RIO[Any, T] =
       ZIO.attempt {
-        val binaryDecoder = decoderFactory.binaryDecoder(avroBytes, decoder)
+        val binaryDecoder = decoderFactory.binaryDecoder(avroBytes, reusableDecoder)
         // check reuse of T
         val result: T = datumReader.read(null.asInstanceOf[T], binaryDecoder)
 
