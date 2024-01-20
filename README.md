@@ -3,4 +3,6 @@
 ### Run
 `docker compose up`
 
+`sbt avroGenerate`
+
 run main class
