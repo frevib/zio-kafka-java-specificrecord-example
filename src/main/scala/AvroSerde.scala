@@ -17,12 +17,12 @@ object AvroSerde {
     val encoderFactory: EncoderFactory = EncoderFactory.get()
     val encoder: BinaryEncoder = encoderFactory.binaryEncoder(ByteArrayOutputStream(0), null)
 
-    override def serialize(topic: String, headers: Headers, personAvro: T): RIO[Any, Array[Byte]] =
+    override def serialize(topic: String, headers: Headers, data: T): RIO[Any, Array[Byte]] =
       ZIO.attempt {
         val baos = ByteArrayOutputStream()
-        val encoderR = encoderFactory.binaryEncoder(baos, encoder)
-        val result = datumWriter.write(personAvro, encoderR)
-        encoderR.flush()
+        val binaryEncoder = encoderFactory.binaryEncoder(baos, encoder)
+        val result = datumWriter.write(data, binaryEncoder)
+        binaryEncoder.flush()
 
         baos.toByteArray
       }
@@ -36,9 +36,9 @@ object AvroSerde {
 
     override def deserialize(topic: String, headers: Headers, avroBytes: Array[Byte]): RIO[Any, T] =
       ZIO.attempt {
-        val decoderR = decoderFactory.binaryDecoder(avroBytes, decoder)
-        // check reuse
-        val result: T = datumReader.read(null.asInstanceOf[T], decoderR)
+        val binaryDecoder = decoderFactory.binaryDecoder(avroBytes, decoder)
+        // check reuse of T
+        val result: T = datumReader.read(null.asInstanceOf[T], binaryDecoder)
 
         result
       }
