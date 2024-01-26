@@ -1,6 +1,5 @@
 package com.eventloopsoftware
 
-import com.aap.personkafka.PersonAvro
 import org.apache.avro.Schema
 import org.apache.avro.io.{BinaryEncoder, DecoderFactory, EncoderFactory}
 import org.apache.avro.specific.{SpecificDatumReader, SpecificDatumWriter, SpecificRecord}

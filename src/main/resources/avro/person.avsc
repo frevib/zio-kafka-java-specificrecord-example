@@ -1,6 +1,6 @@
 {
   "name": "PersonAvro",
-  "namespace": "com.aap.personkafka",
+  "namespace": "com.eventloopsoftware.avro",
   "type": "record",
   "fields": [
     {
@@ -36,6 +36,11 @@
         }
       ],
       "default": null
+    },
+    {
+      "name": "w00ie",
+      "doc": "testing this",
+      "type": "string"
     }
   ]
 }

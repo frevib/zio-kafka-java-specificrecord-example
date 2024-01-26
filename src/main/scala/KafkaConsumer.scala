@@ -1,6 +1,7 @@
 package com.eventloopsoftware
 
-import com.aap.personkafka.PersonAvro
+
+import com.eventloopsoftware.avro.{MonkeyAvro, PersonAvro}
 import zio.*
 import zio.kafka.consumer.{Consumer, Subscription}
 import zio.kafka.serde.Serde
@@ -8,21 +9,22 @@ import zio.stream.ZStream
 
 object KafkaConsumer {
 
-  val deserializer = AvroSerde.AvroDeserializer[PersonAvro](PersonAvro.getClassSchema)
+  // deserializer without schema registry
+  private val deserializer = AvroSerde.AvroDeserializer[MonkeyAvro](MonkeyAvro.getClassSchema)
 
-  val consumer: ZStream[Consumer, Throwable, Nothing] =
+  // deserializer with schema registry
+  val deserializerSchemaRegistry = KafkaAvroSerde.AvroDeserializer[PersonAvro]()
+
+  def consume(topic: String): ZStream[Consumer, Throwable, Nothing] =
     Consumer
       .plainStream(
-        subscription = Subscription.topics("random"),
+        subscription = Subscription.topics(topic),
         keyDeserializer = Serde.long,
-        valueDeserializer = deserializer)
+        valueDeserializer = deserializerSchemaRegistry)
       .tap(r => Console.printLine(s"consuming: ${r.value}"))
-      .map(_.offset)
+      .map(r => r.offset)
       .aggregateAsync(Consumer.offsetBatches)
       .mapZIO(_.commit)
       .drain
-
-
-  //    def de
 
 }

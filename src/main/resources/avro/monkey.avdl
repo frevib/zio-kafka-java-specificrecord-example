@@ -1,0 +1,9 @@
+@namespace("com.eventloopsoftware.avro")
+protocol MonkeyProtocol {
+	@namespace("com.eventloopsoftware.avro")
+	record MonkeyAvro {
+		string name;
+		int age;
+		decimal(10,2) ratio;
+	}
+}

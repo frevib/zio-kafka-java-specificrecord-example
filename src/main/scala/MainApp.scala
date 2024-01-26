@@ -8,6 +8,7 @@ import zio.kafka.producer.{Producer, ProducerSettings}
 
 object MainApp extends ZIOAppDefault {
 
+  val topic = "random12"
   def producerLayer =
     ZLayer.scoped(
       Producer.make(
@@ -18,13 +19,13 @@ object MainApp extends ZIOAppDefault {
   def consumerLayer =
     ZLayer.scoped(
       Consumer.make(
-        ConsumerSettings(List("localhost:9092")).withGroupId("group")
+        settings = ConsumerSettings(List("localhost:9092")).withGroupId("group")
       )
     )
 
   val myApp: ZIO[Any, Throwable, Unit] = (for {
     _ <- Console.printLine("Hello, World!")
-    _ <- KafkaProducer.producer.merge(KafkaConsumer.consumer).runDrain.provide(producerLayer, consumerLayer)
+    _ <- KafkaProducer.producer(topic).merge(KafkaConsumer.consume(topic)).runDrain.provide(producerLayer, consumerLayer)
   } yield ())
 
 

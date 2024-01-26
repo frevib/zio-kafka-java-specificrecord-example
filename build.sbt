@@ -7,7 +7,7 @@ resolvers ++= List("Confluent" at "https://packages.confluent.io/maven/")
 lazy val root = (project in file("."))
   .settings(
     name := "stbavropoc",
-    idePackagePrefix := Some("com.eventloopsoftware"),
+//    idePackagePrefix := Some("com.eventloopsoftware"),
   )
   .settings(libraryDependencies ++= List(
     "dev.zio" %% "zio" % "2.0.21",
@@ -19,5 +19,6 @@ lazy val root = (project in file("."))
 
   ))
   .settings(excludeDependencies += "org.scala-lang.modules" % "scala-collection-compat_2.13")
-  .settings(avroStringType := "String")
+  .settings(avroStringType := "CharSequence")
+  .settings(avroEnableDecimalLogicalType := true)
   .settings(Compile / avroSource := (Compile / resourceDirectory).value / "avro")
