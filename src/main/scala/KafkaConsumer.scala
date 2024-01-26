@@ -10,7 +10,7 @@ import zio.stream.ZStream
 object KafkaConsumer {
 
   // deserializer without schema registry
-  private val deserializer = AvroSerde.AvroDeserializer[MonkeyAvro](MonkeyAvro.getClassSchema)
+  val deserializer = AvroSerde.AvroDeserializer[MonkeyAvro](MonkeyAvro.getClassSchema)
 
   // deserializer with schema registry
   val deserializerSchemaRegistry = KafkaAvroSerde.AvroDeserializer[PersonAvro]()
